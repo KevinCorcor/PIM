@@ -197,12 +197,9 @@ function processNormalModeTables(filePath) {
             } else {
                 atoms.length = atoms.length > 3 ? 3 : atoms.length
             }
-            const signature = rowColumns[1][0] + '(' + atoms.sort().join('') + ')'
+            // sort to ensure merge of same element signatures
+            const signature = rowColumns[1][0] + '(' + [...atoms].sort().join('') + ') ' + Math.abs(parseFloat(rowColumns[2]))
 
-            if(atoms.length > processedNormalModes[NMTableNo].maxAtoms) {
-                processedNormalModes[NMTableNo].maxAtom = atoms.length
-                console.log(processedNormalModes[NMTableNo].maxAtom)
-            }
             if(!processedNormalModes[NMTableNo].rows[signature]) {
                 // if it is the first ocurrence of this combination of mode and elements
                 processedNormalModes[NMTableNo].rows[signature] = {
