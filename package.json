@@ -11,10 +11,7 @@
     "commander": "^9.2.0",
     "mathjs": "^10.5.3"
   },
-  "devDependencies": {
-  },
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/KevinCorcor/PIM.git"
