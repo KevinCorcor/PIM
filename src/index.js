@@ -1,127 +1,18 @@
 const fs = require('fs')
+const path = require('path')
+const mathjs = require('mathjs')
+const ELEMENT_SYMBOLS = require('./elements')
 
-/** Order is important here. Position 0(the first) is null since there is no atomic number of 0 */
-const ELEMENT_SYMBOLS = [
-    'null',
-    'H',
-    'He',
-    'Li',
-    'Be',
-    'B',
-    'C',
-    'N',
-    'O',
-    'F',
-    'Ne',
-    'Na',
-    'Mg',
-    'Al',
-    'Si',
-    'P',
-    'S',
-    'Cl',
-    'Ar',
-    'K',
-    'Ca',
-    'Sc',
-    'Ti',
-    'V',
-    'Cr',
-    'Mn',
-    'Fe',
-    'Co',
-    'Ni',
-    'Cu',
-    'Zn',
-    'Ga',
-    'Ge',
-    'As',
-    'Se',
-    'Br',
-    'Kr',
-    'Rb',
-    'Sr',
-    'Y',
-    'Zr',
-    'Nb',
-    'Mo',
-    'Tc',
-    'Ru',
-    'Rh',
-    'Pd',
-    'Ag',
-    'Cd',
-    'In',
-    'Sn',
-    'Sb',
-    'Te',
-    'I',
-    'Xe',
-    'Cs',
-    'Ba',
-    'La',
-    'Ce',
-    'Pr',
-    'Nd',
-    'Pm',
-    'Sm',
-    'Eu',
-    'Gd',
-    'Tb',
-    'Dy',
-    'Ho',
-    'Er',
-    'Tm',
-    'Yb',
-    'Lu',
-    'Hf',
-    'Ta',
-    'W',
-    'Re',
-    'Os',
-    'Ir',
-    'Pt',
-    'Au',
-    'Hg',	
-	'Tl',
-    'Pb',
-    'Bi',
-    'Po',
-    'At',
-    'Rn',
-    'Fr',
-    'Ra',
-    'Ac',
-    'Th',
-    'Pa',
-    'U',
-    'Np',
-    'Pu',
-    'Am',
-    'Cm',
-    'Bk',
-    'Cf',
-    'Es',
-    'Fm',
-    'Md',
-    'No',
-    'Lr',
-    'Rf',
-    'Db',
-    'Sg',
-    'Bh',
-    'Hs',
-    'Mt',
-    'Ds',
-    'Rg',
-    'Cn',
-    'Uut',
-    'Fl',
-    'Uup',
-    'Lv',
-    'Uus',
-    'Uuo'
-]
+module.exports = (options) => {
+    const results = processNormalModeTables(options.target)
+
+    if (!options.silent) options.prettyPrint ? printTables(results) : console.info(results)
+    if (options.output) {
+        const op = path.join(process.cwd(), options.output)
+        fs.writeFileSync(op, JSON.stringify(results))
+        console.info(`Saved results to ${op}`)
+    }
+}
 
 /** 
  * create a mapping of center numbers to Element Symbol (using the atomic number) one way,
@@ -163,10 +54,7 @@ function getMode(definition) {
     }
 }
 
-/** process the normal mode table by grouping rows of the same atoms and mode then summing relative weights */
-function processNormalModeTables(filePath) {
-    /** read in specified file */
-    const rawFile = fs.readFileSync(filePath, 'UTF-8')
+function processNormalModeTables(rawFile) {
     /** extract normal mode tables */
     const headerRegex = /-*\s+-+\s+!\sNormal Mode\s+\d{1,3}\s+!\s+-+\s+-+\s\s!\sName\s+Definition\s+Value\s+Relative Weight \(%\)\s+!\s+-+$/gm
     const NMTables = rawFile.split(headerRegex)
@@ -214,7 +102,10 @@ function processNormalModeTables(filePath) {
                 }
             } else {
                 // otherwise just update these values
-                processedNormalModes[NMTableNo].rows[signature].relativeWeight += parseFloat(rowColumns[3])
+                // Be aware of the floating point arithmetic here. At least it is just addition.
+                const currentValue = mathjs.bignumber(processedNormalModes[NMTableNo].rows[signature].relativeWeight)
+                const nextValue = mathjs.bignumber(parseFloat(rowColumns[3]))
+                processedNormalModes[NMTableNo].rows[signature].relativeWeight = mathjs.add(currentValue, nextValue)
                 processedNormalModes[NMTableNo].rows[signature].names.push(rowColumns[0])
             }
         })
@@ -234,6 +125,3 @@ function printTables(tables) {
         console.info('--------------------------------------------------------------------------')
     })
 }
-
-const pnmt = processNormalModeTables(process.argv[2])
-printTables(pnmt)

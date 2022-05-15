@@ -1,0 +1,28 @@
+{
+  "name": "pim",
+  "version": "0.0.3",
+  "description": "",
+  "main": "./bin/index.js",
+  "preferGlobal": true,
+  "bin": {
+    "pim": "./bin/index.js"
+  },
+  "dependencies": {
+    "commander": "^9.2.0",
+    "mathjs": "^10.5.3"
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KevinCorcor/PIM.git"
+  },
+  "author": "kevincorcor",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KevinCorcor/PIM/issues"
+  },
+  "homepage": "https://github.com/KevinCorcor/PIM#readme"
+}
