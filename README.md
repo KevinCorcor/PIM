@@ -85,6 +85,11 @@ pim -t ./normalModes.log -o ./results_15052022.json
 # Saved results to /user/Documants/res.json
 ```
 
+If you want to save the `prettyPrint` console text to a file, try the following
+```sh
+pim -t ./normalModes.log > path/to/save/console/output.log
+```
+
 #### No-prettyPrint
 ```sh
 pim -t ./normalModes.log --no-prettyPrint
@@ -113,3 +118,4 @@ pim -t ./normalModes.log --no-prettyPrint
 pim -t ./normalModes.log -o ./results_15052022.json -s
 # Saved results to /user/Documants/res.json
 ```
+
